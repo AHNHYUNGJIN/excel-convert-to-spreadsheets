@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Remix: PAPS 기준표 및 스프레드시트 내보내기",
+  "description": "초등학교 및 중학교 PAPS 학생건강체력평가 등급별 기준표를 시각화하고 Google Sheets로 즉시 내보내는 도구입니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

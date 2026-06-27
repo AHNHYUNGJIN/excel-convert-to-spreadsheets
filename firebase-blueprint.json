@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "studentEvaluation": {
+      "title": "Student Evaluation Record",
+      "description": "A record representing a student's PAPS evaluation score and details",
+      "type": "object",
+      "properties": {
+        "studentName": {
+          "type": "string",
+          "description": "Name or identifier of the student"
+        },
+        "school": {
+          "type": "string",
+          "description": "School level of the student (초등학교, 중학교)"
+        },
+        "grade": {
+          "type": "string",
+          "description": "Grade level of the student"
+        },
+        "gender": {
+          "type": "string",
+          "description": "Gender of the student"
+        },
+        "event": {
+          "type": "string",
+          "description": "The specific PAPS event"
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the PAPS event"
+        },
+        "measuredValue": {
+          "type": "number",
+          "description": "The measured record"
+        },
+        "score": {
+          "type": "number",
+          "description": "The computed PAPS score out of 20"
+        },
+        "gradeLabel": {
+          "type": "string",
+          "description": "The matching PAPS grade level"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "The teacher UID who logged the record"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": [
+        "studentName",
+        "school",
+        "grade",
+        "gender",
+        "event",
+        "category",
+        "measuredValue",
+        "score",
+        "gradeLabel",
+        "ownerId",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "studentEvaluations/{evaluationId}": {
+      "schema": "studentEvaluation",
+      "description": "Teacher logged student PAPS physical fitness records"
+    }
+  }
+}

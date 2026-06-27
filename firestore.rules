@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net (Catch-All Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    // Student Evaluation Validation Blueprint
+    function isValidStudentEvaluation(data) {
+      return data.studentName is string 
+          && data.studentName.size() > 0 
+          && data.studentName.size() <= 100
+          && data.school is string 
+          && (data.school == '초등학교' || data.school == '중학교')
+          && data.grade is string 
+          && data.grade.size() > 0 
+          && data.grade.size() <= 20
+          && data.gender is string 
+          && (data.gender == '남자' || data.gender == '여자')
+          && data.event is string 
+          && data.event.size() > 0 
+          && data.event.size() <= 100
+          && data.category is string 
+          && data.category.size() > 0 
+          && data.category.size() <= 100
+          && (data.measuredValue is int || data.measuredValue is float)
+          && data.score is int 
+          && data.score >= 0 
+          && data.score <= 20
+          && data.gradeLabel is string 
+          && data.gradeLabel.size() > 0 
+          && data.gradeLabel.size() <= 50
+          && data.ownerId is string 
+          && data.ownerId == request.auth.uid
+          && data.createdAt == request.time;
+    }
+
+    // studentEvaluations collection rules
+    match /studentEvaluations/{evaluationId} {
+      // Single-document read & delete
+      allow get, delete: if isVerifiedUser() && isValidId(evaluationId) && existing().ownerId == request.auth.uid;
+      
+      // Collection list (Query Enforcer)
+      allow list: if isVerifiedUser() && resource.data.ownerId == request.auth.uid;
+      
+      // Document creation
+      allow create: if isVerifiedUser() && isValidId(evaluationId) && isValidStudentEvaluation(incoming());
+      
+      // Updates are not allowed for evaluations (immutable logs; to edit, delete and recreate)
+      allow update: if false;
+    }
+  }
+}
